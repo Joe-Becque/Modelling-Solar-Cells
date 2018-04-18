@@ -2,9 +2,7 @@ Program models a solar cell with a p doped Cu2ZnSnS4 absorber layer
 and an n doped CdS buffer layer under solar illumination.
 
 -------------------------------------------
-
 In this Repository:
-
 
 CdS_data
 CZTS_data
@@ -23,13 +21,14 @@ Material.py
 	• Initialises a layer in the material
 
 Solarcell.py
-	• Creates and models a solar cell with layers made from Materials specified and under the illumniation of a spectrum
+	• Creates and models a solar cell with layers made from Materials specified and 
+	  under the illumination of a spectrum
 	• Adjusts the input data describing the Materials and the Spectrum so that they are compatible with
 	  each other.
 	• Finds the energy levels in the p-n junction when the solar cell is formed.
 	• Calculates the external quantum efficiency of the solar cell by modelling the light transmitted
-	  through each layer of the solar cell, and the light absorbed in the CdS and CZTS layer of the solar
-	  cell.
+	  through each layer of the solar cell, and the light absorbed in the CdS and CZTS layer of the
+	  solar cell.
 	• Finds the generation rate of carriers in the p-n junction as a function of depth through the layers.
 	• Calculates the shunt resistance by modelling recombination mechanisms in the solar cell.
 	• Finds the voltage-current relation at a load resistance by considering an equivalent circuit.
@@ -37,10 +36,12 @@ Solarcell.py
 	  optimum load resistance.
 
 GenerateCells.py:
-	• Generates solar cells by varying the doping concentrations and depths over a range and frequency specified
+	• Generates solar cells by varying the doping concentrations and depths over a range and
+	  frequency specified
 	• Depths are varied independently at each set of doping concentrations specified
 	• Doping concentrations are varied independently at each set of depths specified
-	• Returns Dopingfile.txt and Depthsfile.txt which contain all the data on every solar cell the program tests.
+	• Returns Dopingfile.txt and Depthsfile.txt which contain all the data on every solar cell
+      the program tests.
 
 Run.py:
 	• Runs 2 instances of GenerateCells.py to collect data used for the project
@@ -53,4 +54,5 @@ Constants.py:
 Compiling  Run.py will run the program to collect data on simulated solar cells
 Change values in Run.py to specify the parameters of the solar cell layers.
 'num_locs' and 'length' change the frequency at which solar cells are generated.
+Note that even over a small set of depths and doping concentrations the runtime can become very long.
 
