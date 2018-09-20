@@ -2,7 +2,7 @@ import numpy as np
 import Constants as const
 
 class Material:
-    
+    '''Define a new material to use as a layer in the solar cell'''
     def __init__(self, name, data_file=None):
         if name=='air':
             self.name = name
@@ -30,33 +30,30 @@ class Material:
             #values of 1 are currently unknown, values marked by '#' are estimates
             if self.name == 'czts':
                 #recombination
-                self.c_rad_p = 2*1e-10 *1e-6            #radiative recombination constant (m^3/s), (GaAs) Dittrich pg 86
-                #https://ac.els-cdn.com/S0030402617300086/1-s2.0-S0030402617300086-main.pdf?_tid=4dc8ee81-de0f-4d9c-af23-950034fca979&acdnat=1521387301_e622937fc3c1dfe2a23703fea580d5f1
-                #https://aip-scitation-org.ezphost.dur.ac.uk/doi/pdf/10.1063/1.351704
+                self.c_rad_p = 2*1e-10 *1e-6           #radiative recombination constant (m^3/s)
                 self.c_rad_n = 2*1e-10 * 1e-6          
-                self.c_aug_p = 7e-30 *1e-12            #Auger recombination constant (m^6 / s), (GaAs) https://aip-scitation-org.ezphost.dur.ac.uk/doi/pdf/10.1063/1.108817
+                self.c_aug_p = 7e-30 *1e-12            #Auger recombination constant (m^6 / s)
                 self.c_aug_n = 7e-30 *1e-12
-                self.v_surface = 5500e-2            #Surface velocity (m / s) https://www.nature.com/articles/ncomms8961 (2-3 magnitudes different)
-                self.v_th = 1e5                        #thermal velocity of electrons (m/s)  Dittrich pg 94
-                #self.n_trap = 1e20                     #density of trap states  (m^-3)  Yin 2015 Limitation factors for the performance of kesterite Cu 2 ZnSnS 4 thin film solar cells studied by defect characterisation
-                self.sigma_e = 1e-19                   #electron capture cross-section  (m^2) Dittrich pg 94
-                self.sigma_h = 1e-19                   #hole capture cross-section (m^2) Dittrich pg 94
+                self.v_surface = 5500e-2               #Surface velocity (m / s) 
+                self.v_th = 1e5                        #thermal velocity of electrons (m/s)
+                self.sigma_e = 1e-19                   #electron capture cross-section  (m^2)
+                self.sigma_h = 1e-19                   #hole capture cross-section (m^2)
                 self.sigma_surf_e = 1
                 self.sigma_surf_h = 1
                 self.n_surf_trap = 1
                 #Material Properties
                 self.N_T = 4.276e+24                    #density of trapped states (m^-3)
-                self.mobility_h = 25e-4                 #hole mobility (m^2 s^-1 V-1) https://www.sciencedirect.com/science/article/pii/S0030402617300086
-                self.mobility_e = 7.25e-4 #6.2e-4                 #electron mobility (m^2 s^-1 V-1) https://www.sciencedirect.com/science/article/pii/S0030402617300086
+                self.mobility_h = 25e-4                 #hole mobility (m^2 s^-1 V-1)
+                self.mobility_e = 7.25e-4 #6.2e-4       #electron mobility (m^2 s^-1 V-1) 
                 self.diffusivity_n = self.mobility_e * const.k*const.T/const.q  #(m^2 / s)
                 self.diffusivity_p = self.mobility_h * const.k*const.T/const.q  #(m^2 / s)
-                self.e_r = 7.5                          #permitivity of czts  from Adachi data
+                self.e_r = 7.5                          #relative permitivity of czts
                 self.e = self.e_r*const.e 
-                self.N_conduction = 2.2e18*1e6          #DOS in conduction band (m^-3)  https://www.sciencedirect.com/science/article/pii/S0030402617300086
-                self.N_valence = 1.8e19*1e6             #DOS in valence band (m^-3)     https://www.sciencedirect.com/science/article/pii/S0030402617300086
+                self.N_conduction = 2.2e18*1e6          #DOS in conduction band (m^-3) 
+                self.N_valence = 1.8e19*1e6             #DOS in valence band (m^-3)
                 #band edges and energies (undoped)
-                self.E_g = 1.32                          #Energy gap (eV)
-                self.E_valence = 0 #self.delta_E_v
+                self.E_g = 1.32                         #Energy gap (eV)
+                self.E_valence = 0
                 self.E_conduction = self.E_valence + self.E_g
                 self.E_fermi = self.E_valence + 0.5*self.E_g - 0.5*const.k*const.T/const.q*np.log(self.N_conduction/self.N_valence)   #undoped fermi energy in equilibrium (eV)
                 self.n_i = np.sqrt(self.N_conduction*self.N_valence*np.exp(-self.E_g*const.q/(const.k*const.T))) #intrinsic density (when not doped)
@@ -87,32 +84,29 @@ class Material:
                                    'n_i':self.n_i}
             if self.name == 'cds':
                 #recombination
-                self.c_rad_p = 2*1e-10 *1e-6            #radiative recombination constant (m^3/s), (GaAs) Dittrich pg 86
-                #https://ac.els-cdn.com/S0030402617300086/1-s2.0-S0030402617300086-main.pdf?_tid=4dc8ee81-de0f-4d9c-af23-950034fca979&acdnat=1521387301_e622937fc3c1dfe2a23703fea580d5f1
-                #https://aip-scitation-org.ezphost.dur.ac.uk/doi/pdf/10.1063/1.351704
+                self.c_rad_p = 2*1e-10 *1e-6           #radiative recombination constant (m^3/s)
                 self.c_rad_n = 2*1e-10 * 1e-6          
-                self.c_aug_p = 7e-30 *1e-12            #Auger recombination constant (m^6 / s), (GaAs) https://aip-scitation-org.ezphost.dur.ac.uk/doi/pdf/10.1063/1.108817
+                self.c_aug_p = 7e-30 *1e-12            #Auger recombination constant (m^6 / s)
                 self.c_aug_n = 7e-30 *1e-12
-                self.v_th = 1e5                        #thermal velocity of electrons m/s  Dittrich pg 94
-                self.sigma_e = 1e-19                   #electron capture cross-section  m^2 Dittrich pg 94
-                self.sigma_h = 1e-19                   #hole capture cross-section     m^2 Dittrich pg 94
+                self.v_th = 1e5                        #thermal velocity of electrons m/s
+                self.sigma_e = 1e-19                   #electron capture cross-section  m^2
+                self.sigma_h = 1e-19                   #hole capture cross-section     m^2
                 self.sigma_surf_e = 1
-                self.sigma_surf_h = 1e-20 * 1e4 #!!!!!
+                self.sigma_surf_h = 1e-20 * 1e4 #
                 self.n_surf_trap = 6e14 * 1e-4
-                self.v_surface = 0.727 #self.sigma_surf_h * self.n_surf_trap * self.v_th   #=0.6m/s
+                self.v_surface = 0.727
                 #Material Properties
-                self.N_T = 1e23                    #density of trapped states (m^-3)
-                self.mobility_h = 25e-4                 #hole mobility (m^2 s^-1 V-1) https://www.sciencedirect.com/science/article/pii/S0030402617300086
-                self.mobility_e = 100e-4                #electron mobility (m^2 s^-1 V-1) https://www.sciencedirect.com/science/article/pii/S0030402617300086
-                #self.N_T = 1e20   #                  #density of trap states  m^-3  Yin 2015 Limitation factors for the performance of kesterite Cu 2 ZnSnS 4 thin film solar cells studied by defect characterisation
+                self.N_T = 1e23                        #density of trapped states (m^-3)
+                self.mobility_h = 25e-4                #hole mobility (m^2 s^-1 V-1)
+                self.mobility_e = 100e-4               #electron mobility (m^2 s^-1 V-1)
                 self.diffusivity_n = self.mobility_e * const.k*const.T/const.q  #(m^2 / s)
                 self.diffusivity_p = self.mobility_h * const.k*const.T/const.q  #(m^2 / s)
-                self.e_r = 5.16                      #relative permitivity of cds  https://refractiveindex.info/?shelf=main&book=ZnO&page=Stelling
+                self.e_r = 5.16                        #relative permitivity of cds
                 self.e = self.e_r * const.e                
-                self.N_conduction = 1.8e19*1e6 #          #DOS in conduction band (m^-3)
-                self.N_valence = 2.4e18*1e6 #             #DOS in valence band (m^-3)
+                self.N_conduction = 1.8e19*1e6 #       #DOS in conduction band (m^-3)
+                self.N_valence = 2.4e18*1e6 #          #DOS in valence band (m^-3)
                 #band edges and energies (undoped)
-                self.E_g = 2.5                        #Energy gap (eV)
+                self.E_g = 2.5                         #Energy gap (eV)
                 self.E_valence = 0
                 self.E_conduction = self.E_valence + self.E_g
                 self.E_fermi = self.E_valence + 0.5*self.E_g - 0.5*const.k*const.T/const.q*np.log(self.N_conduction/self.N_valence)     #undoped fermi energy in equilibrium (eV)
@@ -142,9 +136,6 @@ class Material:
                                    'E_conduction':self.E_conduction,
                                    'E_fermi':self.E_fermi,
                                    'n_i':self.n_i}
-            #self.T_L = np.arange(0, 400, 1)
-            #self.energy_gap = self.get_energy_gap_with_T(self.T_L)        #energy gap as a function of temp
-            #self.energy_gap_300 = self.energy_gap[300]
     
     def change_energy_levels(self, shift):
         '''Increase all energy levels by shift (eV)'''
