@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import Material
 import Spectrum
-from mpl_toolkits.mplot3d import Axes3D #this is used, don't delete 
+from mpl_toolkits.mplot3d import Axes3D
 from math import factorial
 from collections import OrderedDict
 from scipy.integrate import simps
@@ -28,7 +28,8 @@ class Solarcell:
         '''
         self.n_layer_n_d = n_layer_n_d
         self.p_layer_n_a = p_layer_n_a
-        #Build Solar Cell
+        ###
+        #BUILD SOLAR CELL
         self.air = air
         self.window_layer = window_layer
         self.oxide_layer = oxide_layer
@@ -46,7 +47,7 @@ class Solarcell:
         self.reflection_at_back = 1  #assume R = 1 at the back of the pv
         temp = self.min_max_energy_index()
         self.min_energy_index = temp[0] #1931
-        self.max_energy_index = temp[1] # 32
+        self.max_energy_index = temp[1] #32
         self.n_layer = self.interpolate_energy_axis(self.n_layer)
         self.p_layer =self.interpolate_energy_axis(self.p_layer)
         self.window_layer =self.interpolate_energy_axis(self.window_layer)
@@ -100,10 +101,9 @@ class Solarcell:
         self.photocurrent = self.czts_photocurrent + self.cds_photocurrent
         ###
         #RECOMBINATION
-        ###
         self.p_layerL()
         self.n_layerL()
-        #RUN THESE TO FIND RECOMBINATION CONSTANTS V_SURFACE AND N_T
+        #RUN THESE TO CALIBRATE RECOMBINATION CONSTANTS V_SURFACE AND N_T
         #self.P_LayerFindRecombinationConstants()
         #self.N_LayerFindRecombinationConstants()
         ###
@@ -316,8 +316,7 @@ class Solarcell:
     def get_series_resistance(self):
         '''Get series resistance (Ohm m^2)'''
         ###
-        #series_resistance = 6.2 * 1e-4 #ohm m^2 http://iopscience.iop.org/article/10.1143/JJAP.50.01BG09
-        series_resistance = 4.1 * 1e-4 #ohm m^2 https://onlinelibrary.wiley.com/doi/full/10.1002/aenm.201100526
+        series_resistance = 4.1 * 1e-4
         return series_resistance
         
     def get_p_layer_electron_shunt_info(self):
@@ -326,8 +325,6 @@ class Solarcell:
            Probability of an electron reaching depletion region edge as function of generation depth (array)
            Mean electron diffusion length (m)'''
         l_av = self.p_layer_L_tot
-        #https://www.researchgate.net/publication/290230300_Determination_of_minority_carrier_diffusion_length_of_sprayed-Cu2ZnSnS4_thin_films
-        #https://www-sciencedirect-com.ezphost.dur.ac.uk/science/article/pii/S0038110115003676?via%3Dihub
         #set up depths axis
         depths = self.generation_as_function_of_depth_p_layer[3] #x_start = 0, x_stop = self.pl_depth
         gen = self.generation_as_function_of_depth_p_layer[0]
@@ -356,7 +353,6 @@ class Solarcell:
         Probability of a hole reaching depletion region edge as function of generation depth (array)
         Mean hole diffusion length (m)'''
         l_av = self.n_layer_L_tot
-        #0.06-0.44 micro m for cds https://www.researchgate.net/publication/224525755_Diffusion_length_determination_in_thin-film_CuxSCdS_solar_cells_by_scanning_electron_microscopy
         x_n = self.non_equilibrium_dict['x_n']
         l_crit = self.nl_depth - x_n - l_av
         depths = self.generation_as_function_of_depth_n_layer[3]
@@ -386,10 +382,9 @@ class Solarcell:
            Return dictionary of diode properties.'''
         #arrange czts and cds bands relative to eachother
         #W Bao, M Ichimura data scaled to band gap of input data
-        delta_E_c = 0.007583 #0.05 #
-        delta_E_v = 1.295538 #1.5  #
+        delta_E_c = 0.007583
+        delta_E_v = 1.295538
         #new scaled czts valence energy
-        #czts_E_valence = (frac*(self.p_layer.E_g - self.n_layer.E_valence) - self.p_layer.E_g + self.n_layer.E_conduction) / (1 - frac)
         #shift the rest of the p layer energy bands
         shift = delta_E_v   #czts_E_valence - self.p_layer.E_valence
         self.p_layer.change_energy_levels(shift)
@@ -398,7 +393,6 @@ class Solarcell:
         #equillibrium picture - czts and cds share fermi level
         E_f_0 = self.n_layer_E_fermi_n
         shift = E_f_0 - self.p_layer_E_fermi_p
-        #print(shift)
         if shift <= 0:
             print('CZTS FERMI LEVEL SHIFTED DOWN')
         self.p_layer.change_energy_levels(shift)
@@ -669,7 +663,6 @@ class Solarcell:
             R_par[i] = ((n_1[i]*(1 - (n_1[i] * np.sin(theta_i) / n_2[i])**2)**0.5 - n_2[i] * np.cos(theta_i)) / (n_1[i]*(1 - (n_1[i] * np.sin(theta_i) / n_2[i])**2)**0.5 + n_2[i] * np.cos(theta_i)))**2
             R_perp[i] = ((n_1[i]*np.cos(theta_i) - n_2[i]*(1 - (n_1[i]*np.sin(theta_i) / n_2[i])**2)**0.5) / ((n_1[i] * np.cos(theta_i) + n_2[i]*(1 - (n_1[i] * np.sin(theta_i) / n_2[i])**2)**0.5)))**2
             R[i] = 0.5*(R_par[i] + R_perp[i])           #assume light is unpolarised
-            #R[i] = (n_1[i] - n_2[i])**2/(n_1[i] + n_2[i])**2
         return R
     
     def get_T_R(self, material1, material2, theta_i=const.theta_i):
@@ -800,7 +793,7 @@ class Solarcell:
         Sni3 = 8.11
         Vs = 0.99
         formation_energies = [VCu, VZn, VSn1,VSn2,VSn3, CuZn, CuSn1,CuSn2,CuSn3, ZnSn, SnCu1,SnCu2,SnCu3, ZnCu, SnZn1,SnZn2, Cui, Zni, Sni1,Sni2,Sni3, Vs]
-        construction_temp = 400 + 279.8 #kelvin
+        construction_temp = 400 + 279.8 #Kelvin
         construction_energy = const.k*construction_temp / const.q #eV
         Z = 0
         for i in range(len(formation_energies)):
@@ -816,7 +809,6 @@ class Solarcell:
         for i in range(len(xs)):
             t_h_mins[i] = 1 / (self.p_layer.sigma_h * self.p_layer.v_th * N_ts_boltzmann[i])
             t_e_mins[i] = 1 / (self.p_layer.sigma_e * self.p_layer.v_th * N_ts_boltzmann[i])
-            #R[i] = (n*p - n_i**2) / (t_h_mins[i]*(n + N_c*np.exp(- (E_c-state_level[i])*const.q/kt)) + t_e_mins[i]*(p+N_v*np.exp(- (state_level[i]-E_v)*const.q/kt)))
             R[i] =(n*p - self.p_layer.n_i**2) / (t_h_mins[i]*(n + self.p_layer.N_conduction*np.exp(- (self.p_layer.E_conduction-self.state_level[i])*const.q/kt)) + t_e_mins[i]*(p+self.p_layer.N_valence*np.exp(- (self.state_level[i]-self.p_layer.E_valence)*const.q/kt)))
             t[i] = self.czts_delta_n / R[i]
         t_tot = 0
@@ -854,7 +846,7 @@ class Solarcell:
     def get_p_layer_doping(self):
         '''Returns p layer density of acceptors (m^-3), density of donors (m^-3),
         quasi fermi level (eV), and density of electrons and holes in equillibrium (m^-3)'''
-        n_a = self.p_layer_n_a #4.5e18 *1e6                  #density of acceptors (m^-3)
+        n_a = self.p_layer_n_a             #density of acceptors (m^-3)
         n_d = 1                            #density of donors (m^-3)
         E_fermi_p = self.p_layer.E_valence + const.k*const.T/const.q*np.log(self.p_layer.N_valence / n_a)      #doped fermi energy equilibrium
         n_0 = self.p_layer.n_i**2 / n_a    #equilibrium doped n conc. (m^-3)
@@ -1075,7 +1067,6 @@ class Solarcell:
             for i in range(len(xs)):
                 t_h_mins[i] = 1 / (self.p_layer.sigma_h * self.p_layer.v_th * N_ts_boltzmann[i])
                 t_e_mins[i] = 1 / (self.p_layer.sigma_e * self.p_layer.v_th * N_ts_boltzmann[i])
-                #R[i] = (n*p - n_i**2) / (t_h_mins[i]*(n + N_c*np.exp(- (E_c-state_level[i])*const.q/kt)) + t_e_mins[i]*(p+N_v*np.exp(- (state_level[i]-E_v)*const.q/kt)))
                 R[i] =(n*p - self.p_layer.n_i**2) / (t_h_mins[i]*(n + self.p_layer.N_conduction*np.exp(- (self.p_layer.E_conduction-self.state_level[i])*const.q/kt)) + t_e_mins[i]*(p+self.p_layer.N_valence*np.exp(- (self.state_level[i]-self.p_layer.E_valence)*const.q/kt)))
                 t[i] = self.czts_delta_n / R[i]
             t_tot[k] = 0
