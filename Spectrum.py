@@ -35,7 +35,7 @@ class Spectrum:
             irradiance = all_data[2]                    #W * m^(-2) * nm^(-1)
         
         E_eV = const.h * const.c / (wavelength * 10**(-9) * const.q)  #energy of photon at each wavelength (eV)
-        E_joules = const.h * const.c / (wavelength * 10**(-9))        ##energy of photon at each wavelength (J)
+        E_joules = const.h * const.c / (wavelength * 10**(-9))        #energy of photon at each wavelength (J)
         photocurrent = irradiance / E_joules
         return E_eV, irradiance, wavelength, E_joules, photocurrent
         
