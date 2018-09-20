@@ -145,7 +145,6 @@ class GenerateCells:
         max_idx = unravel_index(parameter.argmax(), parameter.shape) #returns tuple (i, j)
         optimimum_solarcell = solarcells[max_idx[0]][max_idx[1]]
         optimised_doping_comment = 'Optimised {0} is {1} at czts doping = {2} (index {3}) and cds doping = {4} (index {5})'.format(dictkey, optimimum_solarcell, self.p_layer_n_a_vals[max_idx[1]], max_idx[1], self.n_layer_n_d_vals[max_idx[0]], max_idx[0])
-        #print(optimised_doping_comment)
         self.doping_optimisation.write(optimised_doping_comment)
         self.doping_optimisation.write('\n')
         parameter = parameter.transpose()
@@ -258,7 +257,6 @@ class GenerateCells:
         max_idx = unravel_index(parameter.argmax(), parameter.shape) #returns tuple (i, j)
         optimimum_solarcell = solarcells[max_idx[0]][max_idx[1]]
         optimised_depths_comment = 'Optimised {0} is {1} at czts depth = {2} (index {3}) and cds depth = {4} (index {5})'.format(dictkey, optimimum_solarcell, self.pl_depths[max_idx[1]], max_idx[1], self.nl_depths[max_idx[0]], max_idx[0])
-        #print(optimised_depths_comment)
         self.depth_optimisation.write(optimised_depths_comment)
         self.depth_optimisation.write('\n')
         parameter = parameter.transpose()
