@@ -8,13 +8,17 @@ import os
 import GenerateCells
 
 '''
-Generates many solar cells with different depths and doping concentrations.
-Varies depths while keeping doping concentrations constant:
-    CdS and CZTS depths are varied over 'length' number of values.
-    This is repeated num_locs times at different CdS and CZTS doping concentrations.
-Varies doping while keeping depths constant:
-    CdS and CZTS doping concentrations are varied over 'length' number of values.
-    This is repeated num_locs times at different CdS and CZTS depths.
+Generates many solar cells with different CdS and CZTS depths and doping concentrations.
+Two separate sets of permutations are made to provide a sample of solar cells across all 4 variables: 
+1. Varies depths with high frequency while varying doping concentrations at large intervals:
+    CdS and CZTS depths are varied over 'length' (30) number of values.
+    This is repeated 'num_locs' (4) times at different CdS and CZTS doping concentrations.
+2. Varies doping concentrations with high frequency while varying depths at large intervals:
+    CdS and CZTS doping concentrations are varied over 'length' (30) number of values.
+    This is repeated 'num_locs' (4) times at different CdS and CZTS depths.
+
+The range of the values over which the variables are permuted remains the same for 'length' and 'num_locs'.
+It is the interval spacing that is changed.
 
 Saves surface plots of selected outputs.
 Creates .txt file of all outputs and determined parameters for each cell.
@@ -32,19 +36,22 @@ bl_depth = 700e-9
 ss = Spectrum.Spectrum('pvl')
 
 length = 30
-nl_depths = np.logspace(-9, -6, length)
-pl_depths = np.logspace(-8, -5, length)
-n_layer_n_d_vals = np.logspace(20, 24, length)
-p_layer_n_a_vals = np.logspace(20, 24, length)
+#The following are depths to vary over small intervals
+nl_depths = np.logspace(-9, -6, length)         #n layer depth (m)
+pl_depths = np.logspace(-8, -5, length)         #p layer depth (m)
+#The following are doping concentrations to vary over small intervals
+n_layer_n_d_vals = np.logspace(20, 24, length)  #n layer donor concentration (m^-3)
+p_layer_n_a_vals = np.logspace(20, 24, length)  #p layer acceptor concentration (m^-3)
 
 num_locs = 4
-#depths to keep constant
-const_pl_depths = np.logspace(-8, -5, num_locs)
-const_nl_depths = np.logspace(-9, -6, num_locs)
-#doping to keep constant
-const_na_vals = np.logspace(20, 24, num_locs)
-const_nd_vals = np.logspace(20, 24, num_locs)
+#The following are depths to vary at large intervals
+const_pl_depths = np.logspace(-8, -5, num_locs) #p layer depth (m)
+const_nl_depths = np.logspace(-9, -6, num_locs) #n layer depth (m)
+#The following are doping concentrations to vary at large intervals
+const_na_vals = np.logspace(20, 24, num_locs)   #p layer donor concentration (m^-3)
+const_nd_vals = np.logspace(20, 24, num_locs)   #n layer donor concentration (m^-3)
 
+#1. Vary depths with high frequency while varying doping concentrations at large intervals
 maindir = os.getcwd()
 print(maindir)
 for i in range(len(const_na_vals)):
@@ -53,7 +60,6 @@ for i in range(len(const_na_vals)):
         workingdir = 'p_doping='+('%.4g'%const_na_vals[i])+' '+'n_doping='+('%.4g'%const_nd_vals[j])
         os.mkdir(workingdir)
         os.chdir(workingdir)
-        #vary across all depths while keeping doping constant
         opt = GenerateCells.GenerateCells(ss, air,
                                 window_layer, wl_depth,
                                 oxide_layer, ol_depth,
@@ -67,15 +73,14 @@ for i in range(len(const_na_vals)):
                                 maindir=maindir, workingdir=os.getcwd())
         if os.getcwd() != maindir:
             os.chdir(maindir)
-            
+
+#2. Vary doping concentrations with high frequency while varying depths at large intervals
 for i in range(len(const_pl_depths)):
     for j in range(len(const_nl_depths)):
-        #vary across all doping while keeping depths constant
         print('pl_depth[{0}], nl_depth[{1}]'.format(i,j))
         workingdir = 'p_depth='+('%.4g'%const_pl_depths[i])+' '+'n_depth='+('%.4g'%const_nl_depths[j])
         os.mkdir(workingdir)
         os.chdir(workingdir)
-        #vary across all doping while keeping depths constant
         opt = GenerateCells.GenerateCells(ss, air,
                                 window_layer, wl_depth,
                                 oxide_layer, ol_depth,
